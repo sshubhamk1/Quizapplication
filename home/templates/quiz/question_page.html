@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+  <div class="question-container">
+    <h2>Question</h2>
+    <div class="question-text">
+      {{ page.question_text|richtext }}
+    </div>
+
+    <h3>Options</h3>
+    <form method="post">
+      {% csrf_token %}
+      {% for option in page.options.all %}
+        <div class="option-item">
+          <label>
+            <input type="checkbox" name="option_{{ option.id }}">
+            {{ option.text|richtext }}
+          </label>
+        </div>
+      {% endfor %}
+
+      <button type="submit">Submit Answer</button>
+    </form>
+  </div>
+
+  <!-- Optional: Subject and metadata -->
+  <div class="question-meta">
+    <p><strong>Subject:</strong> {{ page.subject }}</p>
+    <p><strong>Difficulty:</strong> {{ page.get_difficulty_display }}</p>
+    <p><strong>Tags:</strong>
+      {% if page.pk %}
+  <p><strong>Tags:</strong>
+    {% for tag in page.tags.all %}
+      <span>{{ tag }}</span>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  </p>
+{% endif %}
+
+    </p>
+  </div>
+
+  <!-- Load MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+{% endblock %}
+
+
+
